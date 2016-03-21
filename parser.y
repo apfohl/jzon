@@ -51,7 +51,6 @@
 %type object { struct jzon_object * }
 %type array { struct jzon_array * }
 %type value { struct jzon_value * }
-%type number { double }
 %type pair { struct pair * }
 %type members { struct members * }
 %type elements { struct jzon_array * }
@@ -150,11 +149,6 @@ elements(E) ::= elements(E_IN) COMMA value(V). {
     E->elements[E->capacity - 1] = V;
 }
 
-value(V) ::= number(N). {
-    V = calloc(1, sizeof(struct jzon_value));
-    V->type = VT_NUMBER;
-    V->number = N;
-}
 value(V) ::= object(O). {
     V = calloc(1, sizeof(struct jzon_value));
     V->type = VT_OBJECT;
@@ -164,6 +158,12 @@ value(V) ::= array(A). {
     V = calloc(1, sizeof(struct jzon_value));
     V->type = VT_ARRAY;
     V->array = A;
+}
+value(V) ::= NUMBER(N). {
+    V = calloc(1, sizeof(struct jzon_value));
+    V->type = VT_NUMBER;
+    V->number = atof(N);
+    free(N);
 }
 value(V) ::= STRING(S). {
     V = calloc(1, sizeof(struct jzon_value));
@@ -185,15 +185,3 @@ value(V) ::= NUL. {
     V = calloc(1, sizeof(struct jzon_value));
     V->type = VT_NULL;
 }
-
-number ::= int.
-number ::= int frac.
-number ::= int exp.
-number ::= int frac exp.
-
-int ::= DIGITS.
-int ::= MINUS DIGITS.
-
-frac ::= DOT DIGITS.
-
-exp ::= EXP DIGITS.

@@ -9,23 +9,20 @@
 
 %%
 
-"null"              return NUL;
-"true"              return TRUE;
-"false"             return FALSE;
+"null"                                              return NUL;
+"true"                                              return TRUE;
+"false"                                             return FALSE;
 
-"{"                 return LBRACE;
-"}"                 return RBRACE;
-"["                 return LBRACKET;
-"]"                 return RBRACKET;
-","                 return COMMA;
-"."                 return DOT;
-":"                 return COLON;
-"-"                 return MINUS;
+"{"                                                 return LBRACE;
+"}"                                                 return RBRACE;
+"["                                                 return LBRACKET;
+"]"                                                 return RBRACKET;
+","                                                 return COMMA;
+":"                                                 return COLON;
 
-(e|e\+|e-|E|E\+|E-) return EXP;
-\"[^"]*\"           return STRING;
-([0-9]|[1-9][0-9]+) return DIGITS;
+\"[^"]*\"                                           return STRING;
+-?([0-9]|[1-9][0-9]*(\.[0-9]*)?([eE][+-]?[0-9]+)?)  return NUMBER;
 
-[ \t\n]+            ;
+[ \t\n]+                                            ;
 
 %%

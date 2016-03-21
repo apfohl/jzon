@@ -11,11 +11,11 @@ int main(int argc, const char **argv)
     if (argc > 1) {
         jzon = jzon_parse(argv[1]);
     } else {
-        jzon = jzon_parse("[\"foo\", \"bar\"");
+        jzon = jzon_parse("{\"number\": -1.3E1}");
     }
 
     if (jzon) {
-        fprintf(stdout, "jzon: %p\n", jzon);
+        fprintf(stdout, "number: %f\n", object_get(jzon->object, "number")->number);
 
         jzon_free(jzon);
     }
