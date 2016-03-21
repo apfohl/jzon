@@ -67,6 +67,15 @@
     free($$);
 }
 
+%destructor elements {
+    for (int i = 0; i < $$->capacity; i++) {
+        value_free($$->elements[i]);
+    }
+
+    free($$->elements);
+    free($$);
+}
+
 start ::= object(O). {
     jzon->type = J_OBJECT;
     jzon->object = O;
