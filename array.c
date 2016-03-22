@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "jzon.h"
 
-void value_free(struct jzon_value *value);
+void value_free(struct jzon *value);
 
 void array_free(struct jzon_array *array)
 {

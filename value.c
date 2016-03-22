@@ -2,17 +2,19 @@
 #include "jzon.h"
 
 void object_free(struct jzon_object *object);
+void array_free(struct jzon_array *array);
 
-void value_free(struct jzon_value *value)
+void value_free(struct jzon *value)
 {
     if (value) {
         switch (value->type) {
-            case VT_OBJECT:
+            case JZON_OBJECT:
                 object_free(value->object);
                 break;
-            case VT_ARRAY:
+            case JZON_ARRAY:
+                array_free(value->array);
                 break;
-            case VT_STRING:
+            case JZON_STRING:
                 free(value->string);
                 break;
             default:

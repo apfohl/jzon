@@ -38,7 +38,7 @@ struct jzon *jzon_parse(const char *data)
 
     yylex_destroy(scanner);
 
-    if (jzon->type == J_ERROR) {
+    if (jzon->type == JZON_ERROR) {
         free(jzon);
 
         return NULL;
@@ -51,10 +51,10 @@ void jzon_free(struct jzon *jzon)
 {
     if (jzon) {
         switch (jzon->type) {
-            case J_OBJECT:
+            case JZON_OBJECT:
                 object_free(jzon->object);
                 break;
-            case J_ARRAY:
+            case JZON_ARRAY:
                 array_free(jzon->array);
                 break;
             default:

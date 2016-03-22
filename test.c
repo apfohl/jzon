@@ -6,19 +6,9 @@
 
 int main(int argc, const char **argv)
 {
-    struct jzon *jzon = NULL;
+    struct jzon *jzon = jzon_parse("{\"number\": -1.3E1}");
 
-    if (argc > 1) {
-        jzon = jzon_parse(argv[1]);
-    } else {
-        jzon = jzon_parse("{\"number\": -1.3E1}");
-    }
-
-    if (jzon) {
-        fprintf(stdout, "number: %f\n", object_get(jzon->object, "number")->number);
-
-        jzon_free(jzon);
-    }
+    jzon_free(jzon);
 
     return 0;
 }

@@ -7,7 +7,7 @@
 
     struct pair {
         char *string;
-        struct jzon_value *value;
+        struct jzon *value;
     };
 
     struct members {
@@ -16,10 +16,10 @@
     };
 
     struct jzon_object *object_create(int capacity);
-    void value_free(struct jzon_value *value);
+    void value_free(struct jzon *value);
     struct jzon_array *array_create(int capacity);
     int object_put(struct jzon_object *object, const char *key,
-                   struct jzon_value *value);
+                   struct jzon *value);
 
     char *string_remove_quotes(const char *data)
     {
@@ -34,7 +34,7 @@
 }
 
 %syntax_error {
-    jzon->type = J_ERROR;
+    jzon->type = JZON_ERROR;
     fprintf(stderr, "Syntax error!\n");
 }
 
@@ -50,7 +50,7 @@
 
 %type object { struct jzon_object * }
 %type array { struct jzon_array * }
-%type value { struct jzon_value * }
+%type value { struct jzon * }
 %type pair { struct pair * }
 %type members { struct members * }
 %type elements { struct jzon_array * }
@@ -76,15 +76,15 @@
 }
 
 start ::= object(O). {
-    jzon->type = J_OBJECT;
+    jzon->type = JZON_OBJECT;
     jzon->object = O;
 }
 start ::= array(A). {
-    jzon->type = J_ARRAY;
+    jzon->type = JZON_ARRAY;
     jzon->array = A;
 }
 start ::= error. {
-    jzon->type = J_ERROR;
+    jzon->type = JZON_ERROR;
     fprintf(stderr, "error.\n");
 }
 
@@ -150,38 +150,38 @@ elements(E) ::= elements(E_IN) COMMA value(V). {
 }
 
 value(V) ::= object(O). {
-    V = calloc(1, sizeof(struct jzon_value));
-    V->type = VT_OBJECT;
+    V = calloc(1, sizeof(struct jzon));
+    V->type = JZON_OBJECT;
     V->object = O;
 }
 value(V) ::= array(A). {
-    V = calloc(1, sizeof(struct jzon_value));
-    V->type = VT_ARRAY;
+    V = calloc(1, sizeof(struct jzon));
+    V->type = JZON_ARRAY;
     V->array = A;
 }
 value(V) ::= NUMBER(N). {
-    V = calloc(1, sizeof(struct jzon_value));
-    V->type = VT_NUMBER;
+    V = calloc(1, sizeof(struct jzon));
+    V->type = JZON_NUMBER;
     V->number = atof(N);
     free(N);
 }
 value(V) ::= STRING(S). {
-    V = calloc(1, sizeof(struct jzon_value));
-    V->type = VT_STRING;
+    V = calloc(1, sizeof(struct jzon));
+    V->type = JZON_STRING;
     V->string = string_remove_quotes(S);
     free(S);
 }
 value(V) ::= TRUE. {
-    V = calloc(1, sizeof(struct jzon_value));
-    V->type = VT_BOOLEAN;
+    V = calloc(1, sizeof(struct jzon));
+    V->type = JZON_BOOLEAN;
     V->boolean = 1;
 }
 value(V) ::= FALSE. {
-    V = calloc(1, sizeof(struct jzon_value));
-    V->type = VT_BOOLEAN;
+    V = calloc(1, sizeof(struct jzon));
+    V->type = JZON_BOOLEAN;
     V->boolean = 0;
 }
 value(V) ::= NUL. {
-    V = calloc(1, sizeof(struct jzon_value));
-    V->type = VT_NULL;
+    V = calloc(1, sizeof(struct jzon));
+    V->type = JZON_NULL;
 }

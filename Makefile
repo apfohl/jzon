@@ -32,7 +32,7 @@ test: test.c $(LIB)
 	@./test
 
 style:
-	astyle -A3s4SpHk3jn jzon.c jzon.h object.c
+	astyle -A3s4SpHk3jn jzon.c jzon.h object.c array.c value.c test.c
 
 clean:
 	rm -f $(LIB) $(OBJECTS) parser.c parser.h lexer.c lexer.h

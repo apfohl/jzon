@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "jzon.h"
 
-void value_free(struct jzon_value *value);
+void value_free(struct jzon *value);
 
 unsigned long hash(const char *str)
 {
@@ -32,7 +32,7 @@ struct jzon_object *object_create(int capacity)
 }
 
 int object_put(struct jzon_object *object, const char *key,
-               struct jzon_value *value)
+               struct jzon *value)
 {
     if (!object || !key) {
         return -1;
@@ -64,9 +64,9 @@ int object_put(struct jzon_object *object, const char *key,
     return 0;
 }
 
-struct jzon_value *object_get(struct jzon_object *object, const char *key)
+struct jzon *object_get(struct jzon_object *object, const char *key)
 {
-    struct jzon_value *value = NULL;
+    struct jzon *value = NULL;
 
     if (object && key) {
         unsigned long hashval = hash((char *)key);
