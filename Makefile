@@ -1,6 +1,6 @@
 LIB = libjzon.a
 
-CFLAGS = -g -Wall -std=gnu11
+CFLAGS = -g -Wall -std=gnu11 -fPIC
 LDFLAGS =
 LDLIBS =
 YACC = ./lemon
