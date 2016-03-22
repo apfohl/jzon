@@ -1,0 +1,13 @@
+language: c
+sudo: false
+compiler:
+  - clang
+  - gcc
+addons:
+  apt:
+    packages:
+    - valgrind
+script:
+  - make
+  - make test
+  - make valgrind

@@ -11,7 +11,7 @@ LFLAGS = --header-file=lexer.h
 SOURCES = parser.c lexer.c jzon.c object.c array.c
 OBJECTS = $(patsubst %.c, %.o, $(SOURCES))
 
-.PHONY: all test style clean dist-clean
+.PHONY: all test valgrind style clean dist-clean
 
 all: $(LIB)
 
@@ -33,6 +33,9 @@ SPECK_LIBS = -ljzon
 -include speck/speck.mk
 test: $(SPECK) $(LIB) $(SUITES)
 	@$(SPECK)
+
+valgrind: $(SPECK) $(LIB) $(SUITES)
+	@valgrind --leak-check=full --error-exitcode=1 $(SPECK)
 
 style:
 	astyle -A3s4SpHk3jn jzon.c jzon.h object.c array.c spec/*.c
