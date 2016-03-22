@@ -11,7 +11,7 @@ LFLAGS = --header-file=lexer.h
 SOURCES = parser.c lexer.c jzon.c object.c array.c
 OBJECTS = $(patsubst %.c, %.o, $(SOURCES))
 
-.PHONY: all style clean dist-clean
+.PHONY: all test style clean dist-clean
 
 all: $(LIB)
 
@@ -27,17 +27,20 @@ lexer.c: lexer.l parser.c
 lemon: lemon.c
 	$(CC) -std=gnu11 -Os -Wall -o $@ $<
 
-test: test.c $(LIB)
-	$(CC) $(CFLAGS) $(LDFLAGS) -L. -o $@ $^ $(LDLIBS) -ljzon
-	@./test
+SPECK_CFLAGS = -I.
+SPECK_LDFLAGS = -L.
+SPECK_LIBS = -ljzon
+-include speck/speck.mk
+test: $(SPECK) $(LIB) $(SUITES)
+	@$(SPECK)
 
 style:
-	astyle -A3s4SpHk3jn jzon.c jzon.h object.c array.c test.c
+	astyle -A3s4SpHk3jn jzon.c jzon.h object.c array.c spec/*.c
 
 clean:
 	rm -f $(LIB) $(OBJECTS) parser.c parser.h lexer.c lexer.h
-	rm -rf *.dSYM
-	rm -f test
+	rm -rf *.dSYM spec/*.dSYM
+	rm -f spec/*.so
 
 dist-clean:
 	@make clean
