@@ -57,6 +57,9 @@ void jzon_free(struct jzon *jzon)
             case JZON_ARRAY:
                 array_free(jzon->array);
                 break;
+            case JZON_STRING:
+                free(jzon->string);
+                break;
             default:
                 break;
         }
@@ -64,3 +67,7 @@ void jzon_free(struct jzon *jzon)
         free(jzon);
     }
 }
+
+int jzon_is_object(struct jzon *jzon);
+
+int jzon_is_array(struct jzon *jzon);

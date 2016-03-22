@@ -16,7 +16,7 @@
     };
 
     struct jzon_object *object_create(int capacity);
-    void value_free(struct jzon *value);
+    void jzon_free(struct jzon *value);
     struct jzon_array *array_create(int capacity);
     int object_put(struct jzon_object *object, const char *key,
                    struct jzon *value);
@@ -58,7 +58,7 @@
 %destructor members {
     for (int i = 0; i < $$->size; i++) {
         free($$->pairs[i]->string);
-        value_free($$->pairs[i]->value);
+        jzon_free($$->pairs[i]->value);
         free($$->pairs[i]);
     }
 
@@ -68,7 +68,7 @@
 
 %destructor elements {
     for (int i = 0; i < $$->capacity; i++) {
-        value_free($$->elements[i]);
+        jzon_free($$->elements[i]);
     }
 
     free($$->elements);

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "jzon.h"
 
-void value_free(struct jzon *value);
+void jzon_free(struct jzon *value);
 
 unsigned long hash(const char *str)
 {
@@ -99,7 +99,7 @@ void object_free(struct jzon_object *object)
     for (int i = 0; i < object->capacity; i++) {
         if (object->members[i].key) {
             free(object->members[i].key);
-            value_free(object->members[i].value);
+            jzon_free(object->members[i].value);
         }
     }
 

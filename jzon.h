@@ -42,4 +42,8 @@ struct jzon *jzon_parse(const char *data);
 
 void jzon_free(struct jzon *jzon);
 
+int jzon_is_object(struct jzon *jzon);
+
+int jzon_is_array(struct jzon *jzon);
+
 #endif
