@@ -7,8 +7,9 @@ void *ParseAlloc(void *(*allocProc)(size_t));
 void Parse(void *, int, const char *, struct jzon *);
 void ParseFree(void *, void (*freeProc)(void *));
 
-void object_free(struct jzon_object *object);
-void array_free(struct jzon_array *array);
+struct jzon *object_get(struct jzon_object *, const char *);
+void object_free(struct jzon_object *);
+void array_free(struct jzon_array *);
 
 struct jzon *jzon_parse(const char *data)
 {
@@ -68,6 +69,52 @@ void jzon_free(struct jzon *jzon)
     }
 }
 
-int jzon_is_object(struct jzon *jzon);
+int jzon_is_object(struct jzon *jzon)
+{
+    return jzon->type == JZON_OBJECT;
+}
 
-int jzon_is_array(struct jzon *jzon);
+int jzon_is_array(struct jzon *jzon)
+{
+    return jzon->type == JZON_ARRAY;
+}
+
+int jzon_is_number(struct jzon *jzon)
+{
+    return jzon->type == JZON_NUMBER;
+}
+
+int jzon_is_string(struct jzon *jzon)
+{
+    return jzon->type == JZON_STRING;
+}
+
+int jzon_is_boolean(struct jzon *jzon)
+{
+    return jzon->type == JZON_BOOLEAN;
+}
+
+int jzon_is_null(struct jzon *jzon)
+{
+    return jzon->type == JZON_NULL;
+}
+
+struct jzon *jzon_object_get(struct jzon *jzon, const char *key)
+{
+    if (jzon_is_object(jzon)) {
+        return object_get(jzon->object, key);
+    } else {
+        return NULL;
+    }
+}
+
+struct jzon *jzon_array_get(struct jzon *jzon, int index)
+{
+    if (jzon_is_array(jzon) &&
+            index < jzon->array->capacity &&
+            index >= 0) {
+        return jzon->array->elements[index];
+    } else {
+        return NULL;
+    }
+}

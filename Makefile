@@ -11,7 +11,7 @@ LFLAGS = --header-file=lexer.h
 SOURCES = parser.c lexer.c jzon.c object.c array.c
 OBJECTS = $(patsubst %.c, %.o, $(SOURCES))
 
-.PHONY: all lemon style clean dist-clean
+.PHONY: all style clean dist-clean
 
 all: $(LIB)
 

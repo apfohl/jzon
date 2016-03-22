@@ -46,4 +46,16 @@ int jzon_is_object(struct jzon *jzon);
 
 int jzon_is_array(struct jzon *jzon);
 
+int jzon_is_number(struct jzon *jzon);
+
+int jzon_is_string(struct jzon *jzon);
+
+int jzon_is_boolean(struct jzon *jzon);
+
+int jzon_is_null(struct jzon *jzon);
+
+struct jzon *jzon_object_get(struct jzon *jzon, const char *key);
+
+struct jzon *jzon_array_get(struct jzon *jzon, int index);
+
 #endif
