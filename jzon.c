@@ -118,3 +118,12 @@ struct jzon *jzon_array_get(struct jzon *jzon, int index)
         return NULL;
     }
 }
+
+int jzon_array_size(struct jzon *jzon)
+{
+    if (jzon_is_array(jzon)) {
+        return jzon->array->capacity;
+    } else {
+        return -1;
+    }
+}

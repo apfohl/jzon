@@ -58,4 +58,6 @@ struct jzon *jzon_object_get(struct jzon *jzon, const char *key);
 
 struct jzon *jzon_array_get(struct jzon *jzon, int index);
 
+int jzon_array_size(struct jzon *jzon);
+
 #endif
