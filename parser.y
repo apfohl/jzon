@@ -1,7 +1,6 @@
 %include {
     #include <stdlib.h>
     #include <assert.h>
-    #include <stdio.h>
     #include <string.h>
     #include "jzon.h"
 
@@ -35,7 +34,6 @@
 
 %syntax_error {
     jzon->type = JZON_ERROR;
-    fprintf(stderr, "Syntax error!\n");
 }
 
 %token_destructor {
@@ -85,7 +83,6 @@ start ::= array(A). {
 }
 start ::= error. {
     jzon->type = JZON_ERROR;
-    fprintf(stderr, "error.\n");
 }
 
 object(O) ::= LBRACE RBRACE. {

@@ -14,9 +14,9 @@ enum jzon_type {
 struct jzon {
     enum jzon_type type;
     union {
-        double number;
         struct jzon_object *object;
         struct jzon_array *array;
+        double number;
         char *string;
         unsigned int boolean;
     };
