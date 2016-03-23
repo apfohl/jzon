@@ -9,6 +9,15 @@ standard.
 
 ## Installation
 
+### OS X with Homebrew
+
+If you use Homebrew under OS X you can use the tap `apfohl/jzon`:
+
+    $ brew tap apfohl/jzon
+    $ brew install jzon
+
+### Manually
+
 JZON comes as a static linkable library. In order to use it, you need to compile
 it first.
 
@@ -34,8 +43,8 @@ Of cause you can uninstall it with the following command:
 ## Usage
 
 To use JZON in your projects, you need to link against the library. If you have
-installed the library to the default `PREFIX`, you can simply use the `-ljzon`
-flag for compilation.
+installed the library to the default `PREFIX` or with Homebrew, you can simply
+use the `-ljzon` flag for compilation.
 
 Example:
 
