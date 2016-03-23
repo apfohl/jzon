@@ -19,8 +19,6 @@ void spec_string_with_escaped_quotes(void)
 {
     const char *json_string = "[\"The Word \\\"Foo\\\" is so damn bar!\"]";
 
-    fprintf(stderr, "%s\n", json_string);
-
     struct jzon *jzon = jzon_parse(json_string);
     sp_assert(jzon != NULL);
 
