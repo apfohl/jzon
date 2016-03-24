@@ -1,6 +1,18 @@
 #ifndef JZON_H
 #define JZON_H
 
+enum jzon_error_type {
+    JE_NONE,
+    JE_ERROR
+};
+
+extern struct jzon_error jzon_error;
+
+struct jzon_error {
+    enum jzon_error_type error;
+    char msg[2048];
+};
+
 enum jzon_type {
     JZON_NUMBER,
     JZON_OBJECT,
