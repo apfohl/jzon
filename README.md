@@ -109,4 +109,26 @@ access the objects data:
         unsigned int boolean = jzon->boolean;
     }
 
+### Error handling
+
+JZON provides a global error variable `jzon_error`. It contains the following
+members:
+
+- `error`: an enum that defines the error type
+- `msg`: a null terminated string that explains the error
+
+The error enum can have the following values:
+
+- `JZONE_NONE`: no error occurred
+- `JZONE_OOM`: out of memory
+- `JZONE_INVAL`: invalid input
+- `JZONE_LEX`: lexer error
+- `JZONE_PARSE`: parser error
+
+Error handling example:
+
+    if (jzon_error.error != JZONE_NONE) {
+        fprintf(stderr, "%s\n", jzon_error.msg);
+    }
+
 Happy JSONing.
