@@ -1,8 +1,11 @@
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
 #include "jzon.h"
 
 void jzon_free(struct jzon *value);
+void set_error(enum jzon_error_type error, const char *fmt, ...);
+void *jzon_calloc(size_t count, size_t size);
 
 unsigned long hash(const char *str)
 {
@@ -18,10 +21,23 @@ unsigned long hash(const char *str)
 
 struct jzon_object *object_create(int capacity)
 {
-    struct jzon_object *object = calloc(1, sizeof(struct jzon_object));
+    if (capacity <= 0) {
+        set_error(JZONE_INVAL, "object_create: %s", "Invalid capacity");
+        return NULL;
+    }
+
+    struct jzon_object *object = jzon_calloc(1, sizeof(struct jzon_object));
+    if (!object) {
+        return NULL;
+    }
+
     object->capacity = capacity;
     object->size = 0;
-    object->members = calloc(object->capacity, sizeof(struct jzon_member));
+    object->members = jzon_calloc(object->capacity, sizeof(struct jzon_member));
+    if (!object->members) {
+        free(object);
+        return NULL;
+    }
 
     for (int i = 0; i < object->capacity; i++) {
         object->members[i].key = NULL;
@@ -55,7 +71,11 @@ int object_put(struct jzon_object *object, const char *key,
 
     if (!reassign) {
         object->size++;
-        object->members[position].key = calloc(strlen(key) + 1, sizeof(char));
+        object->members[position].key = jzon_calloc(strlen(key) + 1, sizeof(char));
+        if (!object->members[position].key) {
+            return -1;
+        }
+
         strcpy(object->members[position].key, key);
     }
 

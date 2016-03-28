@@ -2,6 +2,7 @@
     #include <stdlib.h>
     #include <assert.h>
     #include <string.h>
+    #include <errno.h>
     #include "jzon.h"
 
     struct pair {
@@ -19,11 +20,35 @@
     struct jzon_array *array_create(int capacity);
     int object_put(struct jzon_object *object, const char *key,
                    struct jzon *value);
+    void set_error(enum jzon_error_type error, const char *fmt, ...);
+    void *jzon_calloc(size_t count, size_t size);
+    void *jzon_realloc(void *ptr, size_t size);
 
     char *string_remove_quotes(const char *data)
     {
+        if (!data) {
+            set_error(
+                JZONE_INVAL,
+                "string_remove_quotes: %s",
+                "No input string!"
+            );
+            return NULL;
+        }
+
         int size = strlen(data);
-        char *str = calloc(size - 1, sizeof(char));
+        if (size <= 2) {
+            set_error(
+                JZONE_INVAL,
+                "string_remove_quotes: %s",
+                "String is to short!"
+            );
+            return NULL;
+        }
+
+        char *str = jzon_calloc(size - 2 + 1, sizeof(char));
+        if (!str) {
+            return NULL;
+        }
 
         strncpy(str, data + 1, size - 2);
         str[size - 2] = '\0';
@@ -52,6 +77,8 @@
 %type pair { struct pair * }
 %type members { struct members * }
 %type elements { struct jzon_array * }
+
+// TODO: implement missing destructors
 
 %destructor members {
     for (int i = 0; i < $$->size; i++) {
@@ -86,99 +113,132 @@ start ::= error. {
 }
 
 object(O) ::= LBRACE RBRACE. {
-    O = calloc(1, sizeof(struct jzon_object));
-    O->capacity = 0;
-    O->size = 0;
+    O = jzon_calloc(1, sizeof(struct jzon_object));
+    if (O) {
+        O->capacity = 0;
+        O->size = 0;
+    }
 }
 object(O) ::= LBRACE members(M) RBRACE. {
     O = object_create(M->size);
+    if (O) {
+        for (int i = 0; i < M->size; i++) {
+            object_put(O, M->pairs[i]->string, M->pairs[i]->value);
+            free(M->pairs[i]->string);
+            free(M->pairs[i]);
+        }
 
-    for (int i = 0; i < M->size; i++) {
-        object_put(O, M->pairs[i]->string, M->pairs[i]->value);
-        free(M->pairs[i]->string);
-        free(M->pairs[i]);
+        free(M->pairs);
+        free(M);
     }
-
-    free(M->pairs);
-    free(M);
 }
 
 members(M) ::= pair(P). {
-    M = calloc(1, sizeof(struct members));
-    M->size = 1;
-    M->pairs = calloc(M->size, sizeof(struct pair *));
-    M->pairs[M->size - 1] = P;
+    M = jzon_calloc(1, sizeof(struct members));
+    if (M) {
+        M->size = 1;
+        M->pairs = jzon_calloc(M->size, sizeof(struct pair *));
+        if (M->pairs) {
+            M->pairs[M->size - 1] = P;
+        }
+    }
 }
 members(M) ::= members(M_IN) COMMA pair(P). {
     M = M_IN;
     M->size++;
-    M->pairs = realloc(M->pairs, M->size * sizeof(struct pair *));
-    M->pairs[M->size - 1] = P;
+    M->pairs = jzon_realloc(M->pairs, M->size * sizeof(struct pair *));
+    if (M->pairs) {
+        M->pairs[M->size - 1] = P;
+    }
 }
 
 pair(P) ::= STRING(S) COLON value(V). {
-    P = calloc(1, sizeof(struct pair));
-    P->string = string_remove_quotes(S);
-    P->value = V;
+    P = jzon_calloc(1, sizeof(struct pair));
+    if (P) {
+        P->string = string_remove_quotes(S);
+        P->value = V;
+    }
     free(S);
 }
 
 array(A) ::= LBRACKET RBRACKET. {
-    A = calloc(1, sizeof(struct jzon_array));
-    A->capacity = 0;
-    A->elements = NULL;
+    A = jzon_calloc(1, sizeof(struct jzon_array));
+    if (A) {
+        A->capacity = 0;
+        A->elements = NULL;
+    }
 }
 array(A) ::= LBRACKET elements(E) RBRACKET. {
     A = E;
 }
 
 elements(E) ::= value(V). {
-    E = calloc(1, sizeof(struct jzon_array));
-    E->capacity = 1;
-    E->elements = calloc(E->capacity, sizeof(struct jzon_value *));
-    E->elements[E->capacity - 1] = V;
+    E = jzon_calloc(1, sizeof(struct jzon_array));
+    if (E) {
+        E->capacity = 1;
+        E->elements = jzon_calloc(E->capacity, sizeof(struct jzon_value *));
+        if (E->elements) {
+            E->elements[E->capacity - 1] = V;
+        }
+    }
 }
 elements(E) ::= elements(E_IN) COMMA value(V). {
     E = E_IN;
     E->capacity++;
     E->elements =
-        realloc(E->elements, E->capacity * sizeof(struct jzon_value *));
-    E->elements[E->capacity - 1] = V;
+        jzon_realloc(E->elements, E->capacity * sizeof(struct jzon_value *));
+    if (E->elements) {
+        E->elements[E->capacity - 1] = V;
+    }
 }
 
 value(V) ::= object(O). {
-    V = calloc(1, sizeof(struct jzon));
-    V->type = JZON_OBJECT;
-    V->object = O;
+    V = jzon_calloc(1, sizeof(struct jzon));
+    if (V) {
+        V->type = JZON_OBJECT;
+        V->object = O;
+    }
 }
 value(V) ::= array(A). {
-    V = calloc(1, sizeof(struct jzon));
-    V->type = JZON_ARRAY;
-    V->array = A;
+    V = jzon_calloc(1, sizeof(struct jzon));
+    if (V) {
+        V->type = JZON_ARRAY;
+        V->array = A;
+    }
 }
 value(V) ::= NUMBER(N). {
-    V = calloc(1, sizeof(struct jzon));
-    V->type = JZON_NUMBER;
-    V->number = atof(N);
+    V = jzon_calloc(1, sizeof(struct jzon));
+    if (V) {
+        V->type = JZON_NUMBER;
+        V->number = atof(N);
+    }
     free(N);
 }
 value(V) ::= STRING(S). {
-    V = calloc(1, sizeof(struct jzon));
-    V->type = JZON_STRING;
-    V->string = string_remove_quotes(S);
+    V = jzon_calloc(1, sizeof(struct jzon));
+    if (V) {
+        V->type = JZON_STRING;
+        V->string = string_remove_quotes(S);
+    }
     free(S);
 }
 value(V) ::= TRUE. {
-    V = calloc(1, sizeof(struct jzon));
-    V->type = JZON_BOOLEAN;
-    V->boolean = 1;
+    V = jzon_calloc(1, sizeof(struct jzon));
+    if (V) {
+        V->type = JZON_BOOLEAN;
+        V->boolean = 1;
+    }
 }
 value(V) ::= FALSE. {
-    V = calloc(1, sizeof(struct jzon));
-    V->type = JZON_BOOLEAN;
-    V->boolean = 0;
+    V = jzon_calloc(1, sizeof(struct jzon));
+    if (V) {
+        V->type = JZON_BOOLEAN;
+        V->boolean = 0;
+    }
 }
 value(V) ::= NUL. {
-    V = calloc(1, sizeof(struct jzon));
-    V->type = JZON_NULL;
+    V = jzon_calloc(1, sizeof(struct jzon));
+    if (V) {
+        V->type = JZON_NULL;
+    }
 }
