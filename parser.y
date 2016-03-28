@@ -23,6 +23,8 @@
     void set_error(enum jzon_error_type error, const char *fmt, ...);
     void *jzon_calloc(size_t count, size_t size);
     void *jzon_realloc(void *ptr, size_t size);
+    void object_free(struct jzon_object *object);
+    void array_free(struct jzon_array *array);
 
     char *string_remove_quotes(const char *data)
     {
@@ -78,7 +80,23 @@
 %type members { struct members * }
 %type elements { struct jzon_array * }
 
-// TODO: implement missing destructors
+%destructor object {
+    object_free($$);
+}
+
+%destructor array {
+    array_free($$);
+}
+
+%destructor value {
+    jzon_free($$);
+}
+
+%destructor pair {
+    free($$->string);
+    jzon_free($$->value);
+    free($$);
+}
 
 %destructor members {
     for (int i = 0; i < $$->size; i++) {

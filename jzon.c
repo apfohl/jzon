@@ -24,7 +24,7 @@ void set_error(enum jzon_error_type error, const char *fmt, ...)
 
     va_list args;
     va_start(args, fmt);
-    (void)vsnprintf(jzon_error.msg, 2048, fmt, args);
+    (void)vsnprintf(jzon_error.msg, 2047, fmt, args);
     va_end(args);
 }
 
