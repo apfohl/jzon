@@ -31,7 +31,7 @@ struct jzon_object *object_create(int capacity)
         return NULL;
     }
 
-    object->capacity = capacity;
+    object->capacity = capacity + 1;
     object->size = 0;
     object->members = jzon_calloc(object->capacity, sizeof(struct jzon_member));
     if (!object->members) {
@@ -89,7 +89,7 @@ struct jzon *object_get(struct jzon_object *object, const char *key)
     struct jzon *value = NULL;
 
     if (object && key) {
-        unsigned long hashval = hash((char *)key);
+        unsigned long hashval = hash(key);
         unsigned long position;
         int i = 1;
 

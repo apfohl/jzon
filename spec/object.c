@@ -1,6 +1,16 @@
 #include <speck.h>
 #include <jzon.h>
 
+void spec_access_non_existent_key(void)
+{
+    struct jzon *jzon = jzon_parse("{\"ip2\": \"127.0.0.1\"}");
+
+    struct jzon *value = jzon_object_get(jzon, "ip");
+    sp_assert(value == NULL);
+
+    jzon_free(jzon);
+}
+
 void spec_simple_object(void)
 {
     struct jzon *jzon = jzon_parse("{\"number\": 42}");
