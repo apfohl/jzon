@@ -18,8 +18,8 @@
     struct jzon_object *object_create(int capacity);
     void jzon_free(struct jzon *value);
     struct jzon_array *array_create(int capacity);
-    int object_put(struct jzon_object *object, const char *key,
-                   struct jzon *value);
+    struct jzon_object *object_put(struct jzon_object *object, const char *key,
+        struct jzon *value);
     void set_error(enum jzon_error_type error, const char *fmt, ...);
     void *jzon_calloc(size_t count, size_t size);
     void *jzon_realloc(void *ptr, size_t size);
@@ -131,16 +131,15 @@ start ::= error. {
 }
 
 object(O) ::= LBRACE RBRACE. {
-    O = jzon_calloc(1, sizeof(struct jzon_object));
-    if (O) {
-        O->capacity = 0;
-        O->size = 0;
-    }
+    O = NULL;
 }
 object(O) ::= LBRACE members(M) RBRACE. {
-    O = object_create(M->size);
+    O = object_put(NULL, M->pairs[0]->string, M->pairs[0]->value);
     if (O) {
-        for (int i = 0; i < M->size; i++) {
+        free(M->pairs[0]->string);
+        free(M->pairs[0]);
+
+        for (int i = 1; i < M->size; i++) {
             object_put(O, M->pairs[i]->string, M->pairs[i]->value);
             free(M->pairs[i]->string);
             free(M->pairs[i]);
