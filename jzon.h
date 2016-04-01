@@ -37,15 +37,12 @@ struct jzon {
     };
 };
 
-struct jzon_member {
+struct jzon_object {
     char *key;
     struct jzon *value;
-};
-
-struct jzon_object {
-    int capacity;
-    int size;
-    struct jzon_member *members;
+    int height;
+    struct jzon_object *left;
+    struct jzon_object *right;
 };
 
 struct jzon_array {
