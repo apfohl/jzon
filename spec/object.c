@@ -1,5 +1,7 @@
 #include <speck.h>
 #include <jzon.h>
+#include <sys/stat.h>
+#include <stdio.h>
 
 void spec_access_non_existent_key(void)
 {
@@ -17,6 +19,16 @@ void spec_simple_object(void)
     sp_assert(jzon != NULL);
     sp_assert(jzon->type == JZON_OBJECT);
     sp_assert(jzon->object != NULL);
+
+    jzon_free(jzon);
+}
+
+void spec_three_members(void)
+{
+    struct jzon *jzon = jzon_parse(
+        "{\"type\": null, \"properties\": null, \"geometry\": null}"
+    );
+    sp_assert(jzon != NULL);
 
     jzon_free(jzon);
 }

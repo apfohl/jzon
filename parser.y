@@ -140,7 +140,7 @@ object(O) ::= LBRACE members(M) RBRACE. {
         free(M->pairs[0]);
 
         for (int i = 1; i < M->size; i++) {
-            object_put(O, M->pairs[i]->string, M->pairs[i]->value);
+            O = object_put(O, M->pairs[i]->string, M->pairs[i]->value);
             free(M->pairs[i]->string);
             free(M->pairs[i]);
         }

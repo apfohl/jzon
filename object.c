@@ -109,6 +109,7 @@ struct jzon_object *object_put(struct jzon_object *object, const char *key,
 
     int cmp = strcmp(key, object->key);
     if (cmp == 0) {
+        jzon_free(object->value);
         object->value = value;
         return object;
     } else if (cmp < 0) {
