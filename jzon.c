@@ -160,45 +160,19 @@ int jzon_is_object(struct jzon *jzon)
     return jzon->type == JZON_OBJECT;
 }
 
+struct jzon *jzon_object_get(struct jzon *jzon, const char *key)
+{
+    return object_get(jzon->object, key);
+}
+
 int jzon_is_array(struct jzon *jzon)
 {
     return jzon->type == JZON_ARRAY;
 }
 
-int jzon_is_number(struct jzon *jzon)
-{
-    return jzon->type == JZON_NUMBER;
-}
-
-int jzon_is_string(struct jzon *jzon)
-{
-    return jzon->type == JZON_STRING;
-}
-
-int jzon_is_boolean(struct jzon *jzon)
-{
-    return jzon->type == JZON_BOOLEAN;
-}
-
-int jzon_is_null(struct jzon *jzon)
-{
-    return jzon->type == JZON_NULL;
-}
-
-struct jzon *jzon_object_get(struct jzon *jzon, const char *key)
-{
-    if (jzon_is_object(jzon)) {
-        return object_get(jzon->object, key);
-    } else {
-        return NULL;
-    }
-}
-
 struct jzon *jzon_array_get(struct jzon *jzon, int index)
 {
-    if (jzon_is_array(jzon) &&
-            index < jzon->array->capacity &&
-            index >= 0) {
+    if (index < jzon->array->capacity && index >= 0) {
         return jzon->array->elements[index];
     } else {
         return NULL;
@@ -207,9 +181,40 @@ struct jzon *jzon_array_get(struct jzon *jzon, int index)
 
 int jzon_array_size(struct jzon *jzon)
 {
-    if (jzon_is_array(jzon)) {
-        return jzon->array->capacity;
-    } else {
-        return -1;
-    }
+    return jzon->array->capacity;
+}
+
+int jzon_is_number(struct jzon *jzon)
+{
+    return jzon->type == JZON_NUMBER;
+}
+
+double jzon_get_number(struct jzon *jzon)
+{
+    return jzon->number;
+}
+
+int jzon_is_string(struct jzon *jzon)
+{
+    return jzon->type == JZON_STRING;
+}
+
+char *jzon_get_string(struct jzon *jzon)
+{
+    return jzon->string;
+}
+
+int jzon_is_boolean(struct jzon *jzon)
+{
+    return jzon->type == JZON_BOOLEAN;
+}
+
+int jzon_get_boolean(struct jzon *jzon)
+{
+    return jzon->boolean;
+}
+
+int jzon_is_null(struct jzon *jzon)
+{
+    return jzon->type == JZON_NULL;
 }

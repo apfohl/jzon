@@ -8,9 +8,9 @@ void spec_simple_array(void)
     sp_assert(jzon->type == JZON_ARRAY);
     sp_assert(jzon->array != NULL);
     sp_assert_equal_i(jzon->array->capacity, 3);
-    sp_assert(jzon->array->elements[0]->number == 1.0);
-    sp_assert(jzon->array->elements[1]->number == 2.0);
-    sp_assert(jzon->array->elements[2]->number == 3.0);
+    sp_assert(jzon_get_number(jzon->array->elements[0]) == 1.0);
+    sp_assert(jzon_get_number(jzon->array->elements[1]) == 2.0);
+    sp_assert(jzon_get_number(jzon->array->elements[2]) == 3.0);
 
     jzon_free(jzon);
 }

@@ -20,11 +20,25 @@ void spec_parse_object(void)
     sp_assert(jzon_error.error == JZONE_NONE);
 
     sp_assert(
-        jzon_object_get(jzon_object_get(jzon, "object"), "number")->number == 42
+        jzon_get_number(
+            jzon_object_get(jzon_object_get(jzon, "object"), "number")
+        ) == 42
     );
-    sp_assert(jzon_array_get(jzon_object_get(jzon, "array"), 0)->number == 1);
-    sp_assert(jzon_array_get(jzon_object_get(jzon, "array"), 1)->number == 2);
-    sp_assert(jzon_array_get(jzon_object_get(jzon, "array"), 2)->number == 3);
+    sp_assert(
+        jzon_get_number(
+            jzon_array_get(jzon_object_get(jzon, "array"), 0)
+        ) == 1
+    );
+    sp_assert(
+        jzon_get_number(
+            jzon_array_get(jzon_object_get(jzon, "array"), 1)
+        ) == 2
+    );
+    sp_assert(
+        jzon_get_number(
+            jzon_array_get(jzon_object_get(jzon, "array"), 2)
+        ) == 3
+    );
 
     jzon_free(jzon);
 }

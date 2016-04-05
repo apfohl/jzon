@@ -56,20 +56,26 @@ void jzon_free(struct jzon *jzon);
 
 int jzon_is_object(struct jzon *jzon);
 
-int jzon_is_array(struct jzon *jzon);
-
-int jzon_is_number(struct jzon *jzon);
-
-int jzon_is_string(struct jzon *jzon);
-
-int jzon_is_boolean(struct jzon *jzon);
-
-int jzon_is_null(struct jzon *jzon);
-
 struct jzon *jzon_object_get(struct jzon *jzon, const char *key);
+
+int jzon_is_array(struct jzon *jzon);
 
 struct jzon *jzon_array_get(struct jzon *jzon, int index);
 
 int jzon_array_size(struct jzon *jzon);
+
+int jzon_is_number(struct jzon *jzon);
+
+double jzon_get_number(struct jzon *jzon);
+
+int jzon_is_string(struct jzon *jzon);
+
+char *jzon_get_string(struct jzon *jzon);
+
+int jzon_is_boolean(struct jzon *jzon);
+
+int jzon_get_boolean(struct jzon *jzon);
+
+int jzon_is_null(struct jzon *jzon);
 
 #endif
