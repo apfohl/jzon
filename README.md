@@ -11,9 +11,9 @@ standard.
 
 ### OS X with Homebrew
 
-If you use Homebrew under OS X you can use the tap `apfohl/jzon`:
+If you use Homebrew under OS X you can use the tap `apfohl/brew`:
 
-    $ brew tap apfohl/jzon
+    $ brew tap apfohl/brew
     $ brew install jzon
 
 ### Manually
