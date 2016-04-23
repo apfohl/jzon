@@ -62,12 +62,12 @@ static struct jzon_object *rotate_right(struct jzon_object *object)
 static struct jzon_object *object_create(const char *key, struct jzon *value)
 {
     if (!key) {
-        set_error(JZONE_INVAL, "object_create: %s", "No key is given");
+        set_error(JZONE_INVALID_INPUT, "object_create: %s", "No key is given");
         return NULL;
     }
 
     if (!value) {
-        set_error(JZONE_INVAL, "object_create: %s", "No value is given");
+        set_error(JZONE_INVALID_INPUT, "object_create: %s", "No value is given");
         return NULL;
     }
 
@@ -94,12 +94,12 @@ struct jzon_object *object_put(struct jzon_object *object, const char *key,
                                struct jzon *value)
 {
     if (!key) {
-        set_error(JZONE_INVAL, "object_create: %s", "No key is given");
+        set_error(JZONE_INVALID_INPUT, "object_create: %s", "No key is given");
         return NULL;
     }
 
     if (!value) {
-        set_error(JZONE_INVAL, "object_create: %s", "No value is given");
+        set_error(JZONE_INVALID_INPUT, "object_create: %s", "No value is given");
         return NULL;
     }
 
@@ -150,12 +150,12 @@ struct jzon_object *object_put(struct jzon_object *object, const char *key,
 struct jzon *object_get(struct jzon_object *object, const char *key)
 {
     if (!object) {
-        set_error(JZONE_INVAL, "object_get: %s", "No object is given");
+        set_error(JZONE_INVALID_INPUT, "object_get: %s", "No object is given");
         return NULL;
     }
 
     if (!key) {
-        set_error(JZONE_INVAL, "object_get: %s", "No key is given");
+        set_error(JZONE_INVALID_INPUT, "object_get: %s", "No key is given");
         return NULL;
     }
 

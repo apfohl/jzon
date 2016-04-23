@@ -30,7 +30,7 @@
     {
         if (!data) {
             set_error(
-                JZONE_INVAL,
+                JZONE_INVALID_INPUT,
                 "string_remove_quotes: %s",
                 "No input string!"
             );
@@ -40,7 +40,7 @@
         int size = strlen(data);
         if (size <= 2) {
             set_error(
-                JZONE_INVAL,
+                JZONE_INVALID_INPUT,
                 "string_remove_quotes: %s",
                 "String is to short!"
             );

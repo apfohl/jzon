@@ -32,7 +32,7 @@ void *jzon_calloc(size_t count, size_t size)
 {
     void *mem = calloc(count, size);
     if (!mem) {
-        set_error(JZONE_OOM, "calloc: %s", strerror(errno));
+        set_error(JZONE_OUT_OF_MEMORY, "calloc: %s", strerror(errno));
     }
 
     return mem;
@@ -42,7 +42,7 @@ void *jzon_realloc(void *ptr, size_t size)
 {
     void *mem = realloc(ptr, size);
     if (!mem) {
-        set_error(JZONE_OOM, "realloc: %s", strerror(errno));
+        set_error(JZONE_OUT_OF_MEMORY, "realloc: %s", strerror(errno));
     }
 
     return mem;
@@ -52,7 +52,7 @@ char *jzon_strdup(const char *s1)
 {
     char *str = strdup(s1);
     if (!str) {
-        set_error(JZONE_OOM, "strdup: %s", strerror(errno));
+        set_error(JZONE_OUT_OF_MEMORY, "strdup: %s", strerror(errno));
     }
 
     return str;
@@ -64,7 +64,7 @@ struct jzon *jzon_parse(const char *data)
     jzon_error.msg[0] = '\0';
 
     if (!data) {
-        set_error(JZONE_INVAL, "jzon_parse: No input string!");
+        set_error(JZONE_INVALID_INPUT, "jzon_parse: No input string!");
         return NULL;
     }
 
@@ -78,13 +78,13 @@ struct jzon *jzon_parse(const char *data)
 
     YY_BUFFER_STATE buffer_state = yy_scan_string(data, scanner);
     if (!buffer_state) {
-        set_error(JZONE_LEX, "yy_scan_string: %s", strerror(errno));
+        set_error(JZONE_LEXER_ERROR, "yy_scan_string: %s", strerror(errno));
         goto error_1;
     }
 
     void *parser = ParseAlloc(malloc);
     if (!parser) {
-        set_error(JZONE_PARSE, "ParseAlloc: %s", strerror(errno));
+        set_error(JZONE_PARSER_ERROR, "ParseAlloc: %s", strerror(errno));
         goto error_2;
     }
 
@@ -113,7 +113,7 @@ struct jzon *jzon_parse(const char *data)
     yylex_destroy(scanner);
 
     if (jzon->type == JZON_ERROR) {
-        jzon_error.error = JZONE_PARSE;
+        jzon_error.error = JZONE_PARSER_ERROR;
         sprintf(jzon_error.msg, "jzon_parse: Parsing error");
         free(jzon);
         return NULL;

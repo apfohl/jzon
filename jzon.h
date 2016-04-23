@@ -3,10 +3,10 @@
 
 enum jzon_error_type {
     JZONE_NONE,
-    JZONE_OOM,
-    JZONE_INVAL,
-    JZONE_LEX,
-    JZONE_PARSE
+    JZONE_OUT_OF_MEMORY,
+    JZONE_INVALID_INPUT,
+    JZONE_LEXER_ERROR,
+    JZONE_PARSER_ERROR
 };
 
 struct jzon_error {
