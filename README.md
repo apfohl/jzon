@@ -119,11 +119,11 @@ members:
 
 The error enum can have the following values:
 
-- `JZONE_NONE`: no error occurred
-- `JZONE_OOM`: out of memory
-- `JZONE_INVAL`: invalid input
-- `JZONE_LEX`: lexer error
-- `JZONE_PARSE`: parser error
+- `JZONE_NONE`
+- `JZONE_OUT_OF_MEMORY`
+- `JZONE_INVALID_INPUT`
+- `JZONE_LEXER_ERROR`
+- `JZONE_PARSER_ERROR`
 
 Error handling example:
 
