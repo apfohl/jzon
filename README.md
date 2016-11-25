@@ -61,10 +61,12 @@ JSON array.
 
 ### Parsing a JSON string
 
-    struct jzon *array = jzon_parse("[1, 2, 3]");
-    struct jzon *object = jzon_parse("{\"number\": 42}");
+    enum jzon_error_type error;
+    struct jzon *array = jzon_parse("[1, 2, 3]", &error);
+    struct jzon *object = jzon_parse("{\"number\": 42}", &error);
 
-If an error is encountered during the parsing, `jzon_parse` will return `NULL`.
+If an error is encountered during the parsing, `jzon_parse` will return `NULL`
+and the `error` variable is set to the appropiate error value.
 
 To release the obtained memory by `jzon_parse`, you must call `jzon_free` on the
 object when you are done:
@@ -75,60 +77,71 @@ object when you are done:
 
 The API provides functionality to determine what was parsed:
 
-- `jzon_is_object(struct jzon *jzon)`: Returns `1` if `jzon` is an object
-- `jzon_is_array(struct jzon *jzon)`: Returns `1` if `jzon` is an array
-- `jzon_is_number(struct jzon *jzon)`: Returns `1` if `jzon` is a number
-- `jzon_is_string(struct jzon *jzon)`: Returns `1` if `jzon` is a string
-- `jzon_is_boolean(struct jzon *jzon)`: Returns `1` if `jzon` is a boolean
-- `jzon_is_null(struct jzon *jzon)`: Returns `1` if `jzon` is null
+- `jzon_is_object(struct jzon *jzon, enum jzon_error_type *error)`: Returns `1` if `jzon` is an object
+- `jzon_is_array(struct jzon *jzon, enum jzon_error_type *error)`: Returns `1` if `jzon` is an array
+- `jzon_is_number(struct jzon *jzon, enum jzon_error_type *error)`: Returns `1` if `jzon` is a number
+- `jzon_is_string(struct jzon *jzon, enum jzon_error_type *error)`: Returns `1` if `jzon` is a string
+- `jzon_is_boolean(struct jzon *jzon, enum jzon_error_type *error)`: Returns `1` if `jzon` is a boolean
+- `jzon_is_null(struct jzon *jzon, enum jzon_error_type *error)`: Returns `1` if `jzon` is null
+
+Create an `error` variable:
+
+    enum jzon_error_type error;
 
 If `jzon_is_object` returns `1`, you can use `jzon_object_get` to access the
 members of that object:
 
-    struct jzon *member = jzon_object_get(jzon, "key");
+    struct jzon *member = jzon_object_get(jzon, "key", &error);
 
 If `jzon_is_array` returns `1`, you can use the functions `jzon_array_size` and
 `jzon_array_get`:
 
-    for (int i = 0; i < jzon_array_size(jzon); i++) {
-        struct jzon *element = jzon_array_get(jzon, i);
+    for (int i = 0; i < jzon_array_size(jzon, &error); i++) {
+        struct jzon *element = jzon_array_get(jzon, i, &error);
     }
 
 if `jzon_is_number`, `jzon_is_string` or `jzon_is_boolean` returns `1`, you can
 access the objects data:
 
-    if (jzon_is_number(jzon)) {
+    if (jzon_is_number(jzon, &error)) {
         double number = jzon->number;
     }
 
-    if (jzon_is_string(jzon)) {
+    if (jzon_is_string(jzon, &error)) {
         char *string = jzon->string;
     }
 
-    if (jzon_is_boolean(jzon)) {
+    if (jzon_is_boolean(jzon, &error)) {
         unsigned int boolean = jzon->boolean;
     }
 
 ### Error handling
 
-JZON provides a global error variable `jzon_error`. It contains the following
-members:
-
-- `error`: an enum that defines the error type
-- `msg`: a null terminated string that explains the error
-
-The error enum can have the following values:
+Error handling with JZON is done by assigning an error variable to every API
+function. The error variable is of type `enum jzon_error_type` and can have the
+following values:
 
 - `JZONE_NONE`
 - `JZONE_OUT_OF_MEMORY`
 - `JZONE_INVALID_INPUT`
 - `JZONE_LEXER_ERROR`
 - `JZONE_PARSER_ERROR`
+- `JZONE_NO_ENTRY`,
+- `JZONE_ARRAY_OUT_OF_BOUNDS`
 
 Error handling example:
 
-    if (jzon_error.error != JZONE_NONE) {
-        fprintf(stderr, "%s\n", jzon_error.msg);
+    enum jzon_error_type error;
+    struct jzon *member = jzon_object_get(jzon, "key", &error);
+
+    if (error != JZONE_NONE) {
+        fprintf(stderr, "%s\n", get_error_string(error));
     }
+
+By using the API function `get_error_string` you can turn the error value into a
+readable string.
+
+If you want to turn off error handling, you can pass `NULL` instead of an error
+variable. If so, no error handling is done by JZON.
 
 Happy JSONing.

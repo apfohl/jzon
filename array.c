@@ -5,10 +5,12 @@ void jzon_free(struct jzon *value);
 
 void array_free(struct jzon_array *array)
 {
-    for (int i = 0; i < array->capacity; i++) {
-        jzon_free(array->elements[i]);
-    }
+    if (array) {
+        for (int i = 0; i < array->capacity; i++) {
+            jzon_free(array->elements[i]);
+        }
 
-    free(array->elements);
-    free(array);
+        free(array->elements);
+        free(array);
+    }
 }
