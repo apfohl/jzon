@@ -6,15 +6,10 @@ enum jzon_error_type {
     JZONE_OUT_OF_MEMORY,
     JZONE_INVALID_INPUT,
     JZONE_LEXER_ERROR,
-    JZONE_PARSER_ERROR
+    JZONE_PARSER_ERROR,
+    JZONE_NO_ENTRY,
+    JZONE_ARRAY_OUT_OF_BOUNDS
 };
-
-struct jzon_error {
-    enum jzon_error_type error;
-    char msg[2048];
-};
-
-extern struct jzon_error jzon_error;
 
 enum jzon_type {
     JZON_NUMBER,
@@ -50,32 +45,36 @@ struct jzon_array {
     struct jzon **elements;
 };
 
-struct jzon *jzon_parse(const char *data);
+const char *get_error_string(enum jzon_error_type error);
+
+struct jzon *jzon_parse(const char *data, enum jzon_error_type *error);
 
 void jzon_free(struct jzon *jzon);
 
-int jzon_is_object(struct jzon *jzon);
+int jzon_is_object(struct jzon *jzon, enum jzon_error_type *error);
 
-struct jzon *jzon_object_get(struct jzon *jzon, const char *key);
+struct jzon *jzon_object_get(struct jzon *jzon, const char *key,
+                             enum jzon_error_type *error);
 
-int jzon_is_array(struct jzon *jzon);
+int jzon_is_array(struct jzon *jzon, enum jzon_error_type *error);
 
-struct jzon *jzon_array_get(struct jzon *jzon, int index);
+struct jzon *jzon_array_get(struct jzon *jzon, int index,
+                            enum jzon_error_type *error);
 
-int jzon_array_size(struct jzon *jzon);
+int jzon_array_size(struct jzon *jzon, enum jzon_error_type *error);
 
-int jzon_is_number(struct jzon *jzon);
+int jzon_is_number(struct jzon *jzon, enum jzon_error_type *error);
 
-double jzon_get_number(struct jzon *jzon);
+double jzon_get_number(struct jzon *jzon, enum jzon_error_type *error);
 
-int jzon_is_string(struct jzon *jzon);
+int jzon_is_string(struct jzon *jzon, enum jzon_error_type *error);
 
-char *jzon_get_string(struct jzon *jzon);
+char *jzon_get_string(struct jzon *jzon, enum jzon_error_type *error);
 
-int jzon_is_boolean(struct jzon *jzon);
+int jzon_is_boolean(struct jzon *jzon, enum jzon_error_type *error);
 
-int jzon_get_boolean(struct jzon *jzon);
+int jzon_get_boolean(struct jzon *jzon, enum jzon_error_type *error);
 
-int jzon_is_null(struct jzon *jzon);
+int jzon_is_null(struct jzon *jzon, enum jzon_error_type *error);
 
 #endif

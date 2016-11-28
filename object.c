@@ -4,9 +4,9 @@
 #include "jzon.h"
 
 void jzon_free(struct jzon *value);
-void set_error(enum jzon_error_type error, const char *fmt, ...);
-void *jzon_calloc(size_t count, size_t size);
-char *jzon_strdup(const char *s1);
+void set_error(enum jzon_error_type *error, enum jzon_error_type error_type);
+void *jzon_calloc(size_t count, size_t size, enum jzon_error_type *error);
+char *jzon_strdup(const char *s1, enum jzon_error_type *error);
 
 static int max(int lhs, int rhs)
 {
@@ -59,26 +59,32 @@ static struct jzon_object *rotate_right(struct jzon_object *object)
     return left;
 }
 
-static struct jzon_object *object_create(const char *key, struct jzon *value)
+static struct jzon_object *object_create(const char *key, struct jzon *value,
+                                         enum jzon_error_type *error)
 {
     if (!key) {
-        set_error(JZONE_INVALID_INPUT, "object_create: %s", "No key is given");
+        set_error(error, JZONE_INVALID_INPUT);
         return NULL;
     }
 
     if (!value) {
-        set_error(JZONE_INVALID_INPUT, "object_create: %s", "No value is given");
+        set_error(error, JZONE_INVALID_INPUT);
         return NULL;
     }
 
-    struct jzon_object *object = jzon_calloc(1, sizeof(struct jzon_object));
-    if (!object) {
+    enum jzon_error_type calloc_error;
+    struct jzon_object *object = jzon_calloc(1, sizeof(struct jzon_object),
+        &calloc_error);
+    if (calloc_error != JZONE_NONE) {
+        set_error(error, calloc_error);
         return NULL;
     }
 
-    object->key = jzon_strdup(key);
-    if (!object->key) {
+    enum jzon_error_type strdup_error;
+    object->key = jzon_strdup(key, &strdup_error);
+    if (strdup_error != JZONE_NONE) {
         free(object);
+        set_error(error, strdup_error);
         return NULL;
     }
 
@@ -87,35 +93,42 @@ static struct jzon_object *object_create(const char *key, struct jzon *value)
     object->left = NULL;
     object->right = NULL;
 
+    set_error(error, JZONE_NONE);
     return object;
 }
 
 struct jzon_object *object_put(struct jzon_object *object, const char *key,
-                               struct jzon *value)
+                               struct jzon *value, enum jzon_error_type *error)
 {
     if (!key) {
-        set_error(JZONE_INVALID_INPUT, "object_create: %s", "No key is given");
+        set_error(error, JZONE_INVALID_INPUT);
         return NULL;
     }
 
     if (!value) {
-        set_error(JZONE_INVALID_INPUT, "object_create: %s", "No value is given");
+        set_error(error, JZONE_INVALID_INPUT);
         return NULL;
     }
 
     if (!object) {
-        return object_create(key, value);
+        return object_create(key, value, error);
     }
 
+    enum jzon_error_type object_put_error = JZONE_NONE;
     int cmp = strcmp(key, object->key);
     if (cmp == 0) {
         jzon_free(object->value);
         object->value = value;
         return object;
     } else if (cmp < 0) {
-        object->left = object_put(object->left, key, value);
+        object->left = object_put(object->left, key, value, &object_put_error);
     } else {
-        object->right = object_put(object->right, key, value);
+        object->right = object_put(object->right, key, value, &object_put_error);
+    }
+
+    if (object_put_error != JZONE_NONE) {
+        set_error(error, object_put_error);
+        return NULL;
     }
 
     object->height = max(height(object->left), height(object->right)) + 1;
@@ -144,18 +157,20 @@ struct jzon_object *object_put(struct jzon_object *object, const char *key,
         return rotate_left(object);
     }
 
+    set_error(error, JZONE_NONE);
     return object;
 }
 
-struct jzon *object_get(struct jzon_object *object, const char *key)
+struct jzon *object_get(struct jzon_object *object, const char *key,
+                        enum jzon_error_type *error)
 {
     if (!object) {
-        set_error(JZONE_INVALID_INPUT, "object_get: %s", "No object is given");
+        set_error(error, JZONE_INVALID_INPUT);
         return NULL;
     }
 
     if (!key) {
-        set_error(JZONE_INVALID_INPUT, "object_get: %s", "No key is given");
+        set_error(error, JZONE_INVALID_INPUT);
         return NULL;
     }
 
@@ -164,6 +179,7 @@ struct jzon *object_get(struct jzon_object *object, const char *key)
     while (temp) {
         int cmp = strcmp(key, temp->key);
         if (cmp == 0) {
+            set_error(error, JZONE_NONE);
             return temp->value;
         } else if (cmp < 0) {
             temp = temp->left;
@@ -172,6 +188,7 @@ struct jzon *object_get(struct jzon_object *object, const char *key)
         }
     }
 
+    set_error(error, JZONE_NO_ENTRY);
     return NULL;
 }
 
