@@ -25,9 +25,11 @@ void spec_simple_object(void)
 
 void spec_three_members(void)
 {
-    struct jzon *jzon = jzon_parse(
-        "{\"type\": null, \"properties\": null, \"geometry\": null}", NULL
-    );
+    struct jzon *jzon = jzon_parse("{"
+                                   "\"type\": null,"
+                                   "\"properties\": null,"
+                                   "\"geometry\": null"
+                                   "}", NULL);
     sp_assert(jzon != NULL);
 
     jzon_free(jzon);

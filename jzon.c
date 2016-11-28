@@ -14,7 +14,7 @@ void Parse(void *, int, const char *, struct parser_state *);
 void ParseFree(void *, void (*freeProc)(void *));
 
 struct jzon *object_get(struct jzon_object *object, const char *key,
-    enum jzon_error_type *error);
+                        enum jzon_error_type *error);
 void object_free(struct jzon_object *);
 void array_free(struct jzon_array *);
 

@@ -60,7 +60,7 @@ static struct jzon_object *rotate_right(struct jzon_object *object)
 }
 
 static struct jzon_object *object_create(const char *key, struct jzon *value,
-                                         enum jzon_error_type *error)
+        enum jzon_error_type *error)
 {
     if (!key) {
         set_error(error, JZONE_INVALID_INPUT);
@@ -74,7 +74,7 @@ static struct jzon_object *object_create(const char *key, struct jzon *value,
 
     enum jzon_error_type calloc_error;
     struct jzon_object *object = jzon_calloc(1, sizeof(struct jzon_object),
-        &calloc_error);
+                                 &calloc_error);
     if (calloc_error != JZONE_NONE) {
         set_error(error, calloc_error);
         return NULL;
