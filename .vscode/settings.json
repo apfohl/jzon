@@ -1,0 +1,18 @@
+{
+    "files.associations": {
+        "parser.h": "c",
+        "lexer.h": "c",
+        "jzon.h": "c",
+        "stdarg.h": "c",
+        "stdlib.h": "c"
+    },
+    "files.exclude": {
+        "**/.git": true,
+        "**/.DS_Store": true,
+        "**/*.o": true,
+        "**/*.so": true,
+        "**/*.a": true,
+        "**/*.dSYM": true,
+        "lemon": true
+    }
+}
